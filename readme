@@ -1,0 +1,10 @@
+# Tender Project Begins
+
+## To run server
+
+```
+    npm i
+    npm start
+```
+
+Go to Link http://localhost:3231/api-docs

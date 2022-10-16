@@ -1,0 +1,35 @@
+'use strict'
+
+const mongoose = require('mongoose');
+const userModel = mongoose.model('user');
+const fs = require('fs');
+const seedData = JSON.parse(fs.readFileSync('./bootstrap/seed-data.json', 'utf-8'));
+
+module.exports = async function (eventEmitter){
+    process.env.NODE_APP_INSTANCE = 0;
+    try{
+         if(Number(process.env.NODE_APP_INSTANCE) === 0){
+
+           const userCount = await userModel.count({});
+           // if data already present
+            if(userCount > 0){
+                console.log('Demo users already present');
+                eventEmitter.emit('seeding-done');
+            }
+            else{
+                //insert seed users in collection
+               const users = await userModel.create(seedData.users);
+               if(users){
+                 eventEmitter.emit('seeding-done');
+               }
+            }
+         }
+    }
+    catch(err){
+        console.log('Error in seeding : ', err);
+        // exit seeding
+        eventEmitter.emit('seeding-done');
+    }
+
+};
+
